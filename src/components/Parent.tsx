@@ -1,48 +1,45 @@
-import React, {memo, useState} from "react";
+import React, {useCallback, useState} from "react";
 
-type FizzProps = {
-    isFizz: boolean;
-}
-
-const Fizz = (props: FizzProps) => {
-    const {isFizz} = props;
-    console.log(`Fizzが再描画されました, isFizz=${isFizz}`);
-    return (
-        <span>
-            {isFizz ? "Fizz" : ""}
-        </span>
-    )
-}
-
-type BuzzProps = {
-    isBuzz: boolean;
+type ButtonProps = {
     onClick: () => void;
 }
 
-const Buzz = memo<BuzzProps>((props) => {
-    const {isBuzz, onClick} = props;
-    console.log(`Buzzが再描画されました, isBuzz=${isBuzz}`);
-    return (
-        <span onClick={onClick} style={{cursor: "pointer"}}>
-            {isBuzz ? "Buzz" : ""}
-        </span>
-    )
-})
+const DecrementButton = (props: ButtonProps) => {
+    const {onClick} = props;
+    console.log("DecrementButton rendered");
+    return <button onClick={onClick}>Decrement</button>;
+}
+
+const IncrementButton = React.memo((props: ButtonProps) => {
+    const {onClick} = props;
+    console.log("IncrementButton rendered");
+    return <button onClick={onClick}>Increment</button>;
+});
+
+const DoubleButton = React.memo((props: ButtonProps) => {
+    const {onClick} = props;
+    console.log("DoubleButton rendered");
+    return <button onClick={onClick}>Double</button>;
+});
 
 export const Parent = () => {
     const [count, setCount] = useState(0);
-    const isFizz = count % 3 === 0;
-    const isBuzz = count % 5 === 0;
-
-    const onBuzzClick = () => {
-        console.log(`Buzzがクリックされました isBuzz=${isBuzz}`);
+    const decrement = () => {
+        setCount(count - 1);
     }
-    console.log(`Parentが再描画されました, count=${count}`);
-
+    const increment = () => {
+        setCount(count + 1);
+    }
+    const double = useCallback(() => {
+        setCount(c => c * 2);
+    }
+        , []);
     return (
         <div>
-            <p>現在のカウント: {count} <Fizz isFizz={isFizz} /> <Buzz isBuzz={isBuzz} onClick={onBuzzClick} /></p>
-            <button onClick={() => setCount((c) => c+1)}>+</button>
+            <h1>Count: {count}</h1>
+            <DecrementButton onClick={decrement} />
+            <IncrementButton onClick={increment} />
+            <DoubleButton onClick={double} />
         </div>
     );
 }
